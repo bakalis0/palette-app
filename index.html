@@ -398,21 +398,7 @@ footer{background:var(--ink);padding:26px 56px;display:flex;justify-content:spac
   pointer-events:none;
 }
 
-/* PHOTO MOSAIC */
-.photo-mosaic{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:4px;height:220px;overflow:hidden;
-}
-.pm-img{
-  background-size:cover;background-position:center;
-  transition:transform .6s ease,filter .4s ease;
-  filter:saturate(1.3) brightness(1.0) contrast(1.05);
-  cursor:pointer;
-}
-.pm-img:hover{transform:scale(1.05);filter:saturate(1.7) brightness(1.1) contrast(1.1)}
-.pm-img:nth-child(1){grid-row:span 1}
-.pm-img:nth-child(3){grid-row:span 1}
+
 .ss-statement{
   font-family:var(--fd);font-size:clamp(1rem,1.6vw,1.25rem);
   font-weight:300;font-style:italic;
@@ -583,7 +569,7 @@ footer{background:var(--ink);padding:26px 56px;display:flex;justify-content:spac
     </div>
 
     <div class="hero-form" id="hForm">
-      <input class="h-inp" type="email" id="hEmail" placeholder="your@email.com">
+      <input class="h-inp" type="email" id="hEmail" name="email" placeholder="your@email.com">
       <button class="h-btn" onclick="join('hEmail','hSuccess','hForm','hNote')">Get early access</button>
     </div>
     <div class="h-success" id="hSuccess">You're in. See you on the other side. ✦</div>
@@ -609,7 +595,7 @@ footer{background:var(--ink);padding:26px 56px;display:flex;justify-content:spac
           <div class="ph-hdr">
             <div class="ph-hdr-glow"></div>
             <div class="ph-date">Monday, 28 March · Zermatt</div>
-            <div class="ph-greet">Hey Giannis, <em>what's the plan?</em></div>
+            <div class="ph-greet">Hey John, <em>what's the plan?</em></div>
             <div class="ph-mood">
               <div class="ph-chip on">Eat out</div>
               <div class="ph-chip">Go out</div>
@@ -696,15 +682,6 @@ footer{background:var(--ink);padding:26px 56px;display:flex;justify-content:spac
     The average traveller wastes <strong>3 hours</strong> searching across multiple apps to plan a single weekend trip.
     <br><span class="ss-contrast">Palette does it in one conversation.</span>
   </div>
-</div>
-
-<!-- PHOTO MOSAIC -->
-<div class="photo-mosaic">
-  <div class="pm-img" style="background-image:url('https://images.pexels.com/photos/6446203/pexels-photo-6446203.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-  <div class="pm-img" style="background-image:url('https://images.pexels.com/photos/20879466/pexels-photo-20879466.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-  <div class="pm-img" style="background-image:url('https://images.pexels.com/photos/1581384/pexels-photo-1581384.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-  <div class="pm-img" style="background-image:url('https://images.pexels.com/photos/7929056/pexels-photo-7929056.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-  <div class="pm-img" style="background-image:url('https://images.pexels.com/photos/29079244/pexels-photo-29079244.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
 </div>
 
 <!-- LOCAL DISCOVERY -->
@@ -1052,8 +1029,8 @@ footer{background:var(--ink);padding:26px 56px;display:flex;justify-content:spac
     <span class="fqm reveal">"</span>
     <p class="fq reveal rd1">"I spent 9 years working in luxury hospitality across four continents — and travelling just as much as I worked. Every guest asked me the same thing: where should I go, what should I eat, what's actually worth it? <strong>I was their Palette. Now I'm building one for everyone.</strong>"</p>
     <div class="fby reveal rd2">
-      <div class="fav">G</div>
-      <div><div class="fn">Giannis Bakalis</div><div class="fr">Founder, Palette</div></div>
+      <div class="fav">J</div>
+      <div><div class="fn">John Bakalis</div><div class="fr">Founder, Palette</div></div>
     </div>
   </div>
 </section>
@@ -1065,7 +1042,7 @@ footer{background:var(--ink);padding:26px 56px;display:flex;justify-content:spac
   <h2 class="cta-h reveal rd1">Ready for your next<br><em>great</em> <strong>experience?</strong></h2>
   <p class="cta-sub reveal rd2">Join the founding waitlist. Be first. Shape what we build.</p>
   <div class="cta-form reveal rd2" id="cForm">
-    <input class="c-inp" type="email" id="cEmail" placeholder="your@email.com">
+    <input class="c-inp" type="email" id="cEmail" name="email" placeholder="your@email.com">
     <button class="c-btn" onclick="join('cEmail','cSuccess','cForm','cPerks')">Join the waitlist</button>
   </div>
   <div class="c-success" id="cSuccess">Welcome to Palette. We'll be in touch. ✦</div>
@@ -1121,7 +1098,7 @@ window.addEventListener('load', () => {
 });
 
 // Join
-function join(inputId, successId, formId, noteId) {
+async function join(inputId, successId, formId, noteId) {
   const input = document.getElementById(inputId);
   const email = input.value.trim();
   if (!email || !email.includes('@')) {
@@ -1130,11 +1107,23 @@ function join(inputId, successId, formId, noteId) {
     setTimeout(() => input.style.borderColor = '', 1500);
     return;
   }
-  document.getElementById(formId).style.display = 'none';
-  const n = document.getElementById(noteId);
-  if(n) n.style.display = 'none';
-  document.getElementById(successId).style.display = 'block';
-  const res = await fetch('https://formspree.io/f/mdapgdlo', {method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({email:email,source:formId})});
+  try {
+    const res = await fetch('https://formspree.io/f/mdapgdlo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify({email: email, source: formId})
+    });
+    if (res.ok) {
+      document.getElementById(formId).style.display = 'none';
+      const n = document.getElementById(noteId);
+      if(n) n.style.display = 'none';
+      document.getElementById(successId).style.display = 'block';
+    } else {
+      input.placeholder = 'Something went wrong — try again';
+    }
+  } catch(e) {
+    input.placeholder = 'Something went wrong — try again';
+  }
 }
 
 // Enter key
