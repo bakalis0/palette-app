@@ -1134,7 +1134,7 @@ function join(inputId, successId, formId, noteId) {
   const n = document.getElementById(noteId);
   if(n) n.style.display = 'none';
   document.getElementById(successId).style.display = 'block';
-  console.log('Waitlist:', email);
+  const res = await fetch('https://formspree.io/f/mdapgdlo', {method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({email:email,source:formId})});
 }
 
 // Enter key
